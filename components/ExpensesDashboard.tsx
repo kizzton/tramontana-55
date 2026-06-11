@@ -34,7 +34,11 @@ export default function ExpensesDashboard({
   expenses,
   total,
 }: Props) {
-  const categoryTotals = expenses.reduce(
+  const projectExpenses = expenses.filter(
+    (item: any) =>
+      item.Tipo === "Gasto"
+  );
+  const categoryTotals = projectExpenses.reduce(
     (acc: Record<string, number>, expense) => {
       const category = expense.Categoria_II;
 
@@ -62,7 +66,7 @@ export default function ExpensesDashboard({
   const categoryExpenses =
   selectedCategory === null
     ? []
-    : expenses.filter(
+    : projectExpenses.filter(
         (e) =>
           e.Categoria_II === selectedCategory
       );

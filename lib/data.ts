@@ -3,7 +3,7 @@ import path from "path";
 import Papa from "papaparse";
 
 export async function getExpenses() {
-  const filePath = path.join(process.cwd(), "data/gastos.csv");
+  const filePath = path.join(process.cwd(), "data/movimientos.csv");
 
   const file = fs.readFileSync(filePath, "utf8");
 

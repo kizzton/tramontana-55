@@ -1,18 +1,24 @@
 import { getExpenses } from "@/lib/data";
 import KpiCard from "@/components/KpiCard";
 import ExpensesDashboard from "@/components/ExpensesDashboard";
+import { getMortgageConfig } from "@/lib/hipoteca";
 
 export default async function Home() {
   const expenses = await getExpenses();
 
-  console.log(expenses.slice(0, 5));
+  const projectExpenses = expenses.filter(
+    (item: any) =>
+      item.Tipo === "Gasto"
+  );
 
-  const total = expenses.reduce(
+  console.log(projectExpenses.slice(0, 5));
+
+  const total = projectExpenses.reduce(
     (sum: number, item: any) => sum + item.Coste,
     0
   );
 
-  const categoryTotals = expenses.reduce(
+  const categoryTotals = projectExpenses.reduce(
     (acc: Record<string, number>, expense: any) => {
 
       const category =
@@ -36,6 +42,55 @@ export default async function Home() {
     value,
   }));
 
+  const mortgage =
+  await getMortgageConfig();
+
+  const movements =
+    await getExpenses();
+
+  const capitalConcedido =
+  Number(
+    mortgage["Capital concedido"]
+  );
+
+  const today = new Date();
+
+    const fechaCambio =
+    new Date(
+        mortgage["Fecha cambio"] as string
+    );
+
+  const tipoActual =
+  today < fechaCambio
+    ? Number(
+        mortgage["Tipo inicial"]
+      )
+    : Number(
+        mortgage[
+          "Tipo sin bonificar"
+        ]
+      );
+
+  const capitalDispuesto =
+    movements
+      .filter(
+        (m: any) =>
+          m.Tipo ===
+          "Disposicion hipoteca"
+      )
+      .reduce(
+        (
+          sum: number,
+          m: any
+        ) => sum + m.Coste,
+        0
+      );
+
+  const cuotaEstimada =
+    capitalDispuesto *
+    (tipoActual / 100) /
+    12;
+
   return (
     <main className="p-8">
       <h1 className="text-3xl font-bold">
@@ -52,25 +107,62 @@ export default async function Home() {
           })}
         />
 
+      </div>
+
+      <h2 className="text-2xl font-bold mt-6">
+        Hipoteca
+      </h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
+
         <KpiCard
-          title="Hipoteca dispuesta"
-          value="13.500 €"
+          title="Capital concedido"
+          value={
+            capitalConcedido.toLocaleString(
+              "es-ES",
+              {
+                style: "currency",
+                currency: "EUR",
+              }
+            )
+          }
         />
 
         <KpiCard
-          title="Ahorros invertidos"
-          value="50.321 €"
+          title="Capital dispuesto"
+          value={
+            capitalDispuesto.toLocaleString(
+              "es-ES",
+              {
+                style: "currency",
+                currency: "EUR",
+              }
+            )
+          }
         />
 
         <KpiCard
-          title="Valor estimado"
-          value="475.000 €"
+        title="Tipo actual"
+        value={`${tipoActual.toFixed(2)} %`}
+        />
+
+        <KpiCard
+          title="Próxima cuota"
+          value={
+            cuotaEstimada.toLocaleString(
+              "es-ES",
+              {
+                style: "currency",
+                currency: "EUR",
+              }
+            )
+          }
         />
 
       </div>
 
       <ExpensesDashboard
-        expenses={expenses}
+        expenses={projectExpenses}
         total={total}
       />
 
@@ -89,7 +181,7 @@ export default async function Home() {
           </thead>
 
           <tbody>
-            {expenses.map((expense: any, index: number) => (
+            {projectExpenses.map((expense: any, index: number) => (
               <tr key={index}>
                 <td className="border p-2">{expense.Fecha}</td>
                 <td className="border p-2">{expense.Concepto}</td>
