@@ -204,12 +204,19 @@ const selectedPercentage =
                 </Pie>
 
                 <Tooltip
-                  formatter={(value: number) =>
-                    value.toLocaleString("es-ES", {
-                      style: "currency",
-                      currency: "EUR",
-                    })
-                  }
+                  formatter={(value) => {
+
+                    const amount = Number(value ?? 0);
+
+                    return amount.toLocaleString(
+                      "es-ES",
+                      {
+                        style: "currency",
+                        currency: "EUR",
+                      }
+                    );
+
+                  }}
                 />
 
               </PieChart>
