@@ -9,8 +9,15 @@ export async function getExpenses() {
 
   const result = Papa.parse(file, {
     header: true,
-    dynamicTyping: true,
+    skipEmptyLines: true,
   });
 
-  return result.data;
+  return result.data.map((row: any) => ({
+    ...row,
+    Coste: Number(
+      String(row.Coste)
+        .replace(/\./g, "")
+        .replace(",", ".")
+    ),
+  }));
 }
