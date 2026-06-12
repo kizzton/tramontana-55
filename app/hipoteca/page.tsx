@@ -1,19 +1,64 @@
 import KpiCard from "@/components/KpiCard";
 import { getExpenses } from "@/lib/data";
 import { getMortgageConfig } from "@/lib/hipoteca";
+import BonificationsTable from "@/components/BonificationsTable";
+import {  getBonifications,} from "@/lib/hipoteca";
 
 export default async function HipotecaPage() {
 
   const mortgage =
   await getMortgageConfig();
 
-  const movements =
-    await getExpenses();
-
   const capitalConcedido =
   Number(
     mortgage["Capital concedido"]
   );
+
+  const bonifications =
+  await getBonifications() as any[];
+
+  const activeBonifications =
+  bonifications.filter(
+    (b: any) =>
+      b.Activo === "Sí"
+  );
+
+  const bonificacionActual =
+  activeBonifications.reduce(
+    (sum: number, b: any) =>
+      sum + Number(b.Bonificacion),
+    0
+  );
+
+  const bonificacionMaxima =
+  bonifications.reduce(
+    (sum: number, b: any) =>
+      sum + Number(b.Bonificacion),
+    0
+  );
+
+  const tipoFuturo =
+  Number(
+    mortgage["Tipo sin bonificar"]
+  ) - bonificacionActual;
+
+  const ahorroAnual =
+  capitalConcedido *
+  (bonificacionActual / 100);
+
+  const costeBonificaciones =
+  activeBonifications.reduce(
+    (sum: number, b: any) =>
+      sum + b.CosteAnual,
+    0
+  );
+
+  const neto =
+  ahorroAnual -
+  costeBonificaciones;
+
+  const movements =
+    await getExpenses();
 
   const today = new Date();
 
@@ -125,6 +170,54 @@ export default async function HipotecaPage() {
         />
 
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
+
+  <KpiCard
+    title="Bonificación actual"
+    value={`${bonificacionActual.toFixed(2)} %`}
+  />
+
+  <KpiCard
+    title="Bonificación máxima"
+    value={`${bonificacionMaxima.toFixed(2)} %`}
+  />
+
+  <KpiCard
+    title="Tipo futuro"
+    value={`${tipoFuturo.toFixed(2)} %`}
+  />
+
+  <KpiCard
+    title="Ahorro anual"
+    value={ahorroAnual.toLocaleString(
+      "es-ES",
+      {
+        style: "currency",
+        currency: "EUR",
+      }
+    )}
+  />
+
+  <KpiCard
+  title="Beneficio neto"
+  value={neto.toLocaleString(
+    "es-ES",
+    {
+      style: "currency",
+      currency: "EUR",
+    }
+  )}
+/>
+
+</div>
+
+<BonificationsTable
+  data={bonifications}
+  mortgageAmount={
+    capitalConcedido
+  }
+/>
 
     </main>
   );

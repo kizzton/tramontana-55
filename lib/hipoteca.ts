@@ -30,3 +30,21 @@ export async function getMortgageConfig() {
 
   return config;
 }
+
+export async function getBonifications() {
+
+  const filePath = path.join(
+    process.cwd(),
+    "data/bonificaciones.csv"
+  );
+
+  const file =
+    fs.readFileSync(filePath, "utf8");
+
+  const result = Papa.parse(file, {
+    header: true,
+    dynamicTyping: true,
+  });
+
+  return result.data;
+}

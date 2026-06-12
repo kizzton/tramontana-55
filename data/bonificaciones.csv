@@ -1,5 +1,5 @@
-Producto,Bonificación,Coste Santander,Coste alternativa,Coste anual,Ahorro hipoteca,Resultado
-Nómina + Bizum,"0,5",0,0,0,"1360,00","1360,00"
-Plan de pensiones,"0,1",272,165,107,"272,00","165,00"
-Seguro de moto,"0,1","272,9","149,01","123,89","272,00","148,11"
-Seguro de vida,"0,3","616,67",0,"616,67","816,00","199,33"
+Producto,Bonificacion,CosteSantander,CosteAlternativa,CosteAnual,AhorroHipoteca,Resultado,Activo
+Nómina + Bizum,0.5,0,0,0,1360.00,1360.00,Si
+Plan de pensiones,0.1,272,165,107,272.00,165.00,Si
+Seguro de moto,0.1,272.9,149.01,123.89,272.00,148.11,No
+Seguro de vida,0.3,616.67,0,616.67,816.00,199.33,Si

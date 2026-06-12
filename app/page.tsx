@@ -91,6 +91,67 @@ export default async function Home() {
     (tipoActual / 100) /
     12;
 
+    const capitalAmortizado =
+  movements
+    .filter(
+      (m: any) =>
+        m.Tipo === "Amortizacion"
+    )
+    .reduce(
+      (sum: number, m: any) =>
+        sum + m.Coste,
+      0
+    );
+
+    const interesesPagados =
+  movements
+    .filter(
+      (m: any) =>
+        m.Tipo === "Cuota hipoteca" &&
+        m.Subcategoria === "Intereses"
+    )
+    .reduce(
+      (sum: number, m: any) =>
+        sum + m.Coste,
+      0
+    );
+
+    const costeBonificaciones =
+  movements
+    .filter(
+      (m: any) =>
+        m.Tipo ===
+        "Producto bonificable"
+    )
+    .reduce(
+      (sum: number, m: any) =>
+        sum + m.Coste,
+      0
+    );
+
+    const comisiones =
+  movements
+    .filter(
+      (m: any) =>
+        m.Tipo === "Comision"
+    )
+    .reduce(
+      (sum: number, m: any) =>
+        sum + m.Coste,
+      0
+    );
+
+    const totalPagadoBanco =
+  capitalAmortizado +
+  interesesPagados +
+  costeBonificaciones +
+  comisiones;
+
+  const costeFinanciero =
+  interesesPagados +
+  costeBonificaciones +
+  comisiones;
+
   return (
     <main className="p-8">
       <h1 className="text-3xl font-bold">
@@ -160,6 +221,54 @@ export default async function Home() {
         />
 
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
+
+  <KpiCard
+    title="Capital amortizado"
+    value={capitalAmortizado.toLocaleString(
+      "es-ES",
+      {
+        style: "currency",
+        currency: "EUR",
+      }
+    )}
+  />
+
+  <KpiCard
+    title="Intereses pagados"
+    value={interesesPagados.toLocaleString(
+      "es-ES",
+      {
+        style: "currency",
+        currency: "EUR",
+      }
+    )}
+  />
+
+  <KpiCard
+    title="Total pagado banco"
+    value={totalPagadoBanco.toLocaleString(
+      "es-ES",
+      {
+        style: "currency",
+        currency: "EUR",
+      }
+    )}
+  />
+
+  <KpiCard
+    title="Coste financiero"
+    value={costeFinanciero.toLocaleString(
+      "es-ES",
+      {
+        style: "currency",
+        currency: "EUR",
+      }
+    )}
+  />
+
+</div>
 
       <ExpensesDashboard
         expenses={projectExpenses}
