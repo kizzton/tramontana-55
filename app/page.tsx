@@ -270,6 +270,27 @@ export default async function Home() {
 
 </div>
 
+<h2 className="text-2xl font-bold mt-6">
+        Bonificaciones
+      </h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
+
+        <KpiCard
+          title="Coste productos bonificables"
+          value={
+            costeBonificaciones.toLocaleString(
+              "es-ES",
+              {
+                style: "currency",
+                currency: "EUR",
+              }
+            )
+          }
+        />
+
+      </div>
+
       <ExpensesDashboard
         expenses={projectExpenses}
         total={total}
